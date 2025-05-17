@@ -4,10 +4,6 @@ const authController = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/auth.midddleware');
 
 router.post('/register', authController.register);
-router.get('/register', (req, res) => {
-    res.send("register");
-});
-
 router.post('/login', authController.login);
 router.post('/refresh-token', authController.refreshToken);
 // router.post('/logout', authMiddleware.verifyToken, authController.logout);

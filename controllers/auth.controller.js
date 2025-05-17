@@ -9,14 +9,14 @@ module.exports = {
             const user = await User.findOne({ email: email });
             if (user) {
                 console.log("Email already exists");
-                return res.status(400).json({ message: "Username already exists" });
+                res.status(400).json({ EC: 1, EM: "Email already exists", DT: null });
             }
 
             const hashed = await bcrypt.hash(password, 10);
             const newUser = new User({ email, username, password: hashed });
             await newUser.save();
             console.log("User registered successfully");
-            res.status(201).json({ message: "Register successful" });
+            res.status(201).json({ EC: 0, EM: "Register successful", DT: null });
         } catch (error) {
             res.status(500).json({ message: "Error registering user", error });
         }
