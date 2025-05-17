@@ -26,32 +26,33 @@ module.exports = {
         try {
             const { email, password } = req.body;
 
-            // find by email
             const user = await User.findOne({ email: email });
             if (!user) {
                 console.log("Email not found");
-                return res
-                    .status(400)
-                    .json({ message: "Username or password is incorrect" });
+                return res.status(400).json({ EC: 1, EM: "Username or password is incorrect", DT: null });
             }
 
-            // Compare the pass word
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 console.log("Password is incorrect");
-                return res
-                    .status(400)
-                    .json({ message: "Username or password is incorrect" });
+                return res.status(400).json({ EC: 1, EM: "Username or password is incorrect", DT: null });
             }
-            const accessToken = await generateAccessToken(user);
-            const refreshToken = await generateRefreshToken(user);
+
+            const accessToken = generateAccessToken(user);
+            const refreshToken = generateRefreshToken(user);
 
             console.log("Login successful");
-            res.status(200).json({ message: "Login successful", accessToken, refreshToken });
+            return res.status(200).json({
+                EC: 0,
+                EM: "Login successful",
+                DT: {
+                    accessToken,
+                    refreshToken
+                }
+            });
         } catch (error) {
-            res
-                .status(500)
-                .json({ message: "Username or password is incorrect", error });
+            console.log("Error during login: ", error);
+            return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: error });
         }
     },
 
@@ -59,25 +60,31 @@ module.exports = {
         try {
             const { email, refresh_token } = req.body;
             if (!email || !refresh_token) {
-                return res.status(400).json({ message: "Missing email or refresh_token" });
+                return res.status(400).json({ EC: 1, EM: "Missing email or refresh_token", DT: null });
             }
 
             const user = await User.findOne({ email });
             if (!user) {
-                return res.status(400).json({ message: "User not found" });
+                return res.status(400).json({ EC: 1, EM: "User not found", DT: null });
             }
 
             const verify = verifyRefreshToken(refresh_token);
             if (!verify || verify.email !== email) {
-                return res.status(400).json({ message: "Invalid refresh token" });
+                return res.status(400).json({ EC: 2, EM: "Invalid refresh token", DT: null });
             }
 
             const newAccessToken = generateAccessToken(user);
-            return res.status(200).json({ message: "Refresh token successful", accessToken: newAccessToken });
+            return res.status(200).json({
+                EC: 0,
+                EM: "Refresh token successful",
+                DT: {
+                    accessToken: newAccessToken
+                }
+            });
 
         } catch (error) {
             console.log("Error: ", error);
-            return res.status(500).json({ message: "Internal Server Error", error });
+            return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: error });
         }
     }
 
