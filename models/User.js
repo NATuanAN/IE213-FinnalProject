@@ -3,6 +3,8 @@ const userSchema = new mongodb.Schema({
     email: String,
     username: String,
     password: String,
+    role: String,
+    userImage: String,
 });
 
 // Tạo model từ schema
