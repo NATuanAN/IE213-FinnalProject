@@ -3,7 +3,11 @@ const userSchema = new mongodb.Schema({
     email: String,
     username: String,
     password: String,
-    role: String,
+    role: {
+        type: String,
+        default: 'user',
+        enum: ['user', 'admin'],
+    },
     userImage: String,
 });
 
