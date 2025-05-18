@@ -43,4 +43,16 @@ module.exports =
 
     },
     upload,
+
+    getQuizList: async (req, res) => {
+        try {
+            const quiz = await Quiz.find();
+            console.log("Tablequizz has been added");
+            res.status(200).json({ message: "Get tablequizz", EC: 0, DT: quiz });
+        } catch (e) {
+            console.error("Error while getting quiz list:", e);
+            res.status(500).json({ message: `Error while getting quiz list`, error: e.message });
+        }
+    }
+
 }
