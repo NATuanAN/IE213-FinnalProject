@@ -11,9 +11,8 @@ const userSchema = new mongodb.Schema({
     userImage: String,
 });
 
-// Tạo model từ schema
+
 const User = mongodb.model('User', userSchema);
 
 
-// Export model để dùng ở file khác
 module.exports = User;
