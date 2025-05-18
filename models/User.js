@@ -5,7 +5,7 @@ const userSchema = new mongodb.Schema({
     password: String,
     role: {
         type: String,
-        default: 'USERS',
+        default: 'USER',
         enum: ['USER', 'ADMINS'],
     },
     userImage: String,
