@@ -5,8 +5,8 @@ const userSchema = new mongodb.Schema({
     password: String,
     role: {
         type: String,
-        default: 'user',
-        enum: ['user', 'admin'],
+        default: 'USERS',
+        enum: ['USER', 'ADMINS'],
     },
     userImage: String,
 });
