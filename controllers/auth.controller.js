@@ -8,7 +8,7 @@ module.exports = {
 
             const user = await User.findOne({ email: email });
             if (user) {
-                console.log("Email already exists");
+                console.log("Email already exisn    ts");
                 res.status(400).json({ EC: 1, EM: "Email already exists", DT: null });
             }
 
