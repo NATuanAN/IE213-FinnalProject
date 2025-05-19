@@ -1,15 +1,32 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../utils/token');
+const multer = require('multer')
+const path = require('path')
+
+//Uploads Imamges
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploadsUser/');
+    },
+    filename: function (req, file, cb) {
+        const ext = path.extname(file.originalname);
+        const filename = Date.now() + '-' + Math.round(Math.random() * 1E9) + ext;
+        cb(null, filename);
+    }
+});
+
+const upload = multer({ storage: storage });
 module.exports = {
+    upload,
     register: async (req, res) => {
         try {
             const { email, username, password } = req.body;
 
             const user = await User.findOne({ email: email });
             if (user) {
-                console.log("Email already exisn    ts");
-                res.status(400).json({ EC: 1, EM: "Email already exists", DT: null });
+                console.log("Email already exists");
+                return res.status(400).json({ EC: 1, EM: "Email already exists", DT: null });
             }
 
             const hashed = await bcrypt.hash(password, 10);
@@ -86,6 +103,56 @@ module.exports = {
             console.log("Error: ", error);
             return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: error });
         }
-    }
+    },
 
-};
+
+
+    createUser: async (req, res) => {
+        try {
+            const { email, username, password, role } = req.body;
+            const user = await User.findOne({ email: email });
+            // Check email is already in use
+            if (user) {
+                console.log("This email is already in use");
+                return res
+                    .status(400)
+                    .json({ EC: 1, EM: "Email already exists", DT: null });
+            }
+            const userImage = req.file?.filename || null;
+
+            //Hashed pass
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const newUser = new User({
+                email: email,
+                username: username,
+                password: hashedPassword,
+                role: role,
+                userImage: userImage,
+            });
+
+
+            newUser.save();
+            console.log("User created successfully");
+            return res.status(200).json({ EC: 0, EM: "User created successfully", DT: newUser });
+        } catch (error) {
+            console.log("Error: ", error);
+            return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: error });
+        }
+    },
+
+
+    getAllUser: async (req, res) => {
+        try {
+            const users = await User.find({});
+            console.log("User list");
+            return res.status(200).json({ EC: 0, EM: "User created successfully", DT: users });
+        } catch (e) {
+            console.log(`Error: ${e}`);
+            return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: e });
+
+        }
+    }
+}
+

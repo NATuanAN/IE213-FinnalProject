@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 
-const Quiz = require("../controllers/quiz.controller");
+const QuizController = require("../controllers/quiz.controller");
 
 
-router.post('/quiz', Quiz.upload.single("quizImage"), Quiz.postCreateNewQuiz);
-router.get('/quiz/all', Quiz.getQuizList);
+router.post('/quiz', QuizController.upload.single("quizImage"), QuizController.postCreateNewQuiz);
+router.get('/quiz/all', QuizController.getQuizList);
 
 module.exports = router;
