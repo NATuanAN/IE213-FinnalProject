@@ -23,14 +23,13 @@ module.exports =
             const { description, name, difficulty } = req.body;
             const quizImage = req.file?.filename || null;
 
-
             const quiz = new Quiz({
                 description,
                 name,
                 difficulty,
                 quizImage
             });
-
+            quiz.id = quiz._id.toString();
             await quiz.save();
 
             console.log("New quiz has been added");

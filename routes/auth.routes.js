@@ -13,6 +13,7 @@ router.post(
     authController.createUser
 );
 router.get('/participant/all', authController.getAllUser);
+router.delete('/participant', authController.deleteUser);
 // router.post('/logout', authMiddleware.verifyToken, authController.logout);
 // router.post('/change-password', authMiddleware.verifyToken, authController.changePassword);
 // router.post('/update-profile', authMiddleware.verifyToken, authController.updateProfile);

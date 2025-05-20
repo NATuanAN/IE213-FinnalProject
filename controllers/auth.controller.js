@@ -30,7 +30,13 @@ module.exports = {
             }
 
             const hashed = await bcrypt.hash(password, 10);
-            const newUser = new User({ email, username, password: hashed });
+
+            const newUser = new User({
+                email,
+                username,
+                password: hashed,
+            });
+            newUser.id = newUser._id.toString();
             await newUser.save();
             console.log("User registered successfully");
             res.status(201).json({ EC: 0, EM: "Register successful", DT: null });
@@ -124,6 +130,7 @@ module.exports = {
 
             const hashedPassword = await bcrypt.hash(password, 10);
 
+
             const newUser = new User({
                 email: email,
                 username: username,
@@ -131,7 +138,7 @@ module.exports = {
                 role: role,
                 userImage: userImage,
             });
-
+            newUser.id = newUser._id.toString();
 
             newUser.save();
             console.log("User created successfully");
@@ -152,6 +159,18 @@ module.exports = {
             console.log(`Error: ${e}`);
             return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: e });
 
+        }
+    },
+    deleteUser: async (req, res) => {
+        try {
+            const { _id } = req.body;
+            const user = await User.findByIdAndDelete(_id);
+            console.log("User deleted successfully");
+            return res.status(200).json({ EC: 0, EM: "User deleted successfully", DT: user });
+
+        } catch (e) {
+            console.log(`Error: ${e}`);
+            return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: e });
         }
     }
 }

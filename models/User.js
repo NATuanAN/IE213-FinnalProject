@@ -1,5 +1,6 @@
 const mongodb = require('mongoose');
 const userSchema = new mongodb.Schema({
+    id: String,
     email: String,
     username: String,
     password: String,
