@@ -186,6 +186,47 @@ module.exports = {
             console.log(`Error: ${e}`);
             return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: e });
         }
+    },
+    updateUser: async (req, res) => {
+        try {
+            const { id, username, role } = req.body;
+            if (!id || id === '') {
+                console.log("Invalid id");
+                return res.status(400).json({ EC: 1, EM: "Invalid id", DT: null });
+            }
+            const updateFiels = {
+                username: username,
+                role: role
+            }
+            const userImage = req.file?.filename || null;
+            if (userImage) {
+                updateFiels.userImage = userImage;
+            }
+            const updatedUser = await User.findByIdAndUpdate(id, updateFiels,
+                { new: true, }
+            );
+
+
+            if (!updatedUser) {
+                console.log("User Image not found");
+                return res
+                    .status(404)
+                    .json({ EC: 1, EM: "User Image not found", DT: null });
+            }
+
+            console.log("User updated successfully");
+            return res
+                .status(200)
+                .json({
+                    EC: 0,
+                    EM: "User updated successfully",
+                    DT: updatedUser,
+                });
+
+        } catch (e) {
+            console.log(`Error: ${e}`);
+            return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: e });
+        }
     }
 }
 
