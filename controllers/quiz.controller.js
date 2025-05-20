@@ -52,6 +52,32 @@ module.exports =
             console.error("Error while getting quiz list:", e);
             res.status(500).json({ message: `Error while getting quiz list`, error: e.message });
         }
-    }
+    },
+    deleteQuiz: async (req, res) => {
+        try {
+            const { id } = req.params;
+            if (!id) {
+                console.log("There is not id");
+                return res
+                    .status(400)
+                    .json({ message: "There is not id", EC: -1, EM: "There is not id", });
+            }
+            const quiz = await Quiz.findByIdAndDelete(id);
+            console.log("Delete quiz has been added");
+            res
+                .status(200)
+                .json({
+                    message: "Delete quiz has add",
+                    EC: 0,
+                    DT: quiz,
+                    EM: "Delete quiz has been added",
+                });
+        }
+        catch (e) {
+            console.log("Delete quiz has not been added")
+            return res.status(500).json({ message: `Delete quiz has not added, err: ${e}`, EC: -1, EM: "Delete quiz has not added", });
+        }
+    },
 
 }
+
