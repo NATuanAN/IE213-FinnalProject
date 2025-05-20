@@ -163,8 +163,12 @@ module.exports = {
     },
     deleteUser: async (req, res) => {
         try {
-            const { _id } = req.body;
-            const user = await User.findByIdAndDelete(_id);
+            const { id } = req.body;
+            if (!id || id === '') {
+                console.log("Invalid id");
+                return res.status(400).json({ EC: 1, EM: "Invalid id", DT: null });
+            }
+            const user = await User.findByIdAndDelete(id);
             console.log("User deleted successfully");
             return res.status(200).json({ EC: 0, EM: "User deleted successfully", DT: user });
 
