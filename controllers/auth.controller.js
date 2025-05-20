@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../utils/token');
-const multer = require('multer')
-const path = require('path')
-
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 //Uploads Imamges
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -169,6 +169,16 @@ module.exports = {
                 return res.status(400).json({ EC: 1, EM: "Invalid id", DT: null });
             }
             const user = await User.findByIdAndDelete(id);
+            if (user.userImage) {
+                const filePath = path.join(__dirname, '../uploadsUser/', user.userImage);
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error("Failed to delete image file:", err);
+                    } else {
+                        console.log("Image file deleted successfully");
+                    }
+                });
+            }
             console.log("User deleted successfully");
             return res.status(200).json({ EC: 0, EM: "User deleted successfully", DT: user });
 

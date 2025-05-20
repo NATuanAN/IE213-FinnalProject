@@ -7,7 +7,7 @@ const userSchema = new mongodb.Schema({
     role: {
         type: String,
         default: 'USER',
-        enum: ['USER', 'ADMINS'],
+        enum: ['USER', 'ADMIN'],
     },
     userImage: String,
 });
