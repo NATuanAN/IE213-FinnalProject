@@ -78,6 +78,55 @@ module.exports =
             return res.status(500).json({ message: `Delete quiz has not added, err: ${e}`, EC: -1, EM: "Delete quiz has not added", });
         }
     },
+    pustQuizbyAdmin: async (req, res) => {
+        try {
+            const { id, description, name, difficulty } = req.body;
+            if (!id) {
+                return res.status(400).json({
+                    message: "Missing quiz ID",
+                    EC: -1,
+                    EM: "Quiz ID is required to update"
+                });
+            }
 
+            const quizImage = req.file?.filename || null;
+            const updateFields = {
+                description, name, difficulty,
+            };
+            if (quizImage) { updateFields.quizImage = quizImage; }
+            const updateQuiz = await Quiz.findByIdAndUpdate(
+                id,
+                updateFields,
+                { new: true },
+            );
+            if (!updateQuiz) {
+                console.log("Can not update");
+                return res.status(400).json({
+                    message: "Can not update",
+                    EC: -1,
+                    EM: "Can not update",
+                });
+            }
+            console.log("Pust quiz by admin has been added");
+            return res
+                .status(200)
+                .json({
+                    message: "Pust quiz by admin has been added",
+                    EC: 0,
+                    DT: updateQuiz,
+                    EM: "Pust quiz by admin has been added",
+                });
+        }
+        catch (e) {
+            console.log(`Error while pust quiz by admin: ${e}`);
+            return res
+                .status(500)
+                .json({
+                    message: `Error while pust quiz by admin`,
+                    EC: -1,
+                    EM: `Error while pust quiz by admin`,
+                });
+        }
+    }
 }
 
