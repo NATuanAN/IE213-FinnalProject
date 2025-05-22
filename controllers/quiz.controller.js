@@ -137,6 +137,35 @@ module.exports =
                     EM: `Error while pust quiz by admin`,
                 });
         }
-    }
+    },
+
+
+    getByID: async (req, res) => {
+        try {
+            const quizzId = req.body.quizId;
+            const quizz = await Quiz.findById(quizzId);
+            if (!quizzId || quizzId === undefined || quizzId === null || !quizz)
+                return res.status(400).json({
+                    message: "Missing quiz ID",
+                    EC: -1,
+                    EM: "Quiz ID is required to update"
+                });
+            return res.status(200).json({
+                message: "Quiz has been updated",
+                EC: 0,
+                DT: quizz,
+                EM: "Quiz has been updated"
+            });
+        }
+        catch (e) {
+            console.log(`Ther error is: ${e}`);
+            return res.status(500).json({
+                message: "Error while update quiz",
+                EC: -1,
+                EM: "Error while update quiz",
+            });
+
+        }
+    },
 }
 

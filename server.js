@@ -4,12 +4,12 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth.routes');
 const quizRoutes = require('./routes/quiz.routes');
-
+const path = require('path');
 const app = express();
 
 app.use(cors({ origin: process.env.CLIENT_URL }));
 app.use(express.json());
-
+app.use('/uploadsQuizz', express.static(path.join(__dirname, 'uploadsQuizz')));
 app.use('/api/v1', authRoutes);
 app.use('/api/v1', quizRoutes);
 const PORT = process.env.PORT || 5000;
