@@ -10,6 +10,7 @@ const app = express();
 app.use(cors({ origin: process.env.CLIENT_URL }));
 app.use(express.json());
 app.use('/uploadsQuizz', express.static(path.join(__dirname, 'uploadsQuizz')));
+
 app.use('/api/v1', authRoutes);
 app.use('/api/v1', quizRoutes);
 const PORT = process.env.PORT || 5000;

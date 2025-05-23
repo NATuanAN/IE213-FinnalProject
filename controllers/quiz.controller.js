@@ -46,6 +46,7 @@ module.exports =
     getQuizList: async (req, res) => {
         try {
             const quiz = await Quiz.find();
+            quiz.image = `http://localhost:8081/uploadsQuizz/${quiz.quizImage}`;
             console.log("Tablequizz has been added");
             res.status(200).json({ message: "Get tablequizz", EC: 0, DT: quiz });
         } catch (e) {
@@ -167,5 +168,6 @@ module.exports =
 
         }
     },
+
 }
 

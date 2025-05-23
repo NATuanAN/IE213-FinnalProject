@@ -49,6 +49,7 @@ module.exports = {
         try {
             const { email, password } = req.body;
 
+
             const user = await User.findOne({ email: email });
             if (!user) {
                 console.log("Email not found");
@@ -63,14 +64,21 @@ module.exports = {
 
             const accessToken = generateAccessToken(user);
             const refreshToken = generateRefreshToken(user);
+            // user.accessToken = accessToken;
+            // user.refreshToken = refreshToken;
 
+            // await user.save();
             console.log("Login successful");
             return res.status(200).json({
                 EC: 0,
                 EM: "Login successful",
                 DT: {
                     accessToken,
-                    refreshToken
+                    refreshToken,
+                    email: user.email,
+                    username: user.username,
+                    id: user.id,
+                    role: user.role
                 }
             });
         } catch (error) {
@@ -226,6 +234,35 @@ module.exports = {
         } catch (e) {
             console.log(`Error: ${e}`);
             return res.status(500).json({ EC: -1, EM: "Internal Server Error", DT: e });
+        }
+    },
+    getUserWithPaginate: async (req, res) => {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+
+            const skip = (page - 1) * limit;
+            const userList = await User.find().skip(skip).limit(limit);
+            const safeUsers = userList.map(user => {
+                const { password, ...rest } = user._doc;
+                return rest;
+            });
+            const totalPages = await User.countDocuments();
+            const results = {
+                users: safeUsers,
+                totalPages: totalPages,
+            }
+            return res.status(200).json({
+                EC: 0,
+                EM: "User updated successfully",
+                DT: results,
+            });
+
+        } catch (error) {
+            console.log(`Error: ${error}`);
+            return res
+                .status(500)
+                .json({ EC: -1, EM: "Internal Server Error", DT: error });
         }
     }
 }
