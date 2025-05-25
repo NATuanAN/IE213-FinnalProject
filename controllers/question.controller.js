@@ -65,6 +65,7 @@ module.exports = {
                 });
             }
 
+
             const answer = await Answer.create({ question_id, description, correct_answer });
             console.log("Add answer successfully");
             return res.status(200).json({
@@ -76,6 +77,31 @@ module.exports = {
         } catch (error) {
             console.log("Error in postAnswer", error);
             res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+    getQuesbyQuizz: async (req, res) => {
+        try {
+            const { quizId } = req.query;
+            if (!quizId) {
+                console.log("Missing fields in getQuesbyQuizz");
+                return res.status(400).json({
+                    message: "Missing required fields for question",
+                    EC: -1,
+                    DT: null,
+                });
+            }
+            const questions = await Question.find({ quiz_id: quizId });
+            console.log("Questions fetched successfully");
+            return res.status(200).json({
+                message: "Questions fetched successfully",
+                EC: 0,
+                DT: questions
+            });
+
+        }
+        catch (e) {
+            console.log("Error in getQuesbyQuizz", e);
+            res.status(500).json({ message: 'Internal server error', EC: 0, DT: null });
         }
     }
 };

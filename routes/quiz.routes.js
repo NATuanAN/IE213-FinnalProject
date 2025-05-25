@@ -13,6 +13,7 @@ router.post('/quiz', QuizController.upload.single("quizImage"), QuizController.p
 router.get('/quiz/all', QuizController.getQuizList);
 router.put('/quiz', QuizController.upload.single("quizImage"), quizController.pustQuizbyAdmin);
 router.delete('/quiz/:id', QuizController.deleteQuiz);
-// router.get('/questions-by-quiz', QuizController.getByID);
 router.get('/quiz-by-participant', QuizController.getQuizList);
+// router.get('/questions-by-quiz', QuizController.getQuestionbyQuizz);
+
 module.exports = router;
