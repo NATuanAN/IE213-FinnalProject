@@ -6,12 +6,10 @@ const AnswerSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-
         correct_answer: {
             type: Boolean,
             required: true,
-            enum: ["true", "false"],
-            default: "false",
+            default: false, // use boolean, not string
         },
         description: {
             type: String,
@@ -20,6 +18,5 @@ const AnswerSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
-
 
 module.exports = mongoose.model("Answer", AnswerSchema);

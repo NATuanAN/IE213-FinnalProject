@@ -56,7 +56,7 @@ module.exports = {
         try {
             const { question_id, description, correct_answer } = req.body;
 
-            if (!question_id || !description || typeof correct_answer === "undefined") {
+            if (!question_id || !description || correct_answer === undefined || correct_answer === null) {
                 console.log("Missing fields in postAnswer");
                 return res.status(400).json({
                     message: "Missing required fields for answer",
