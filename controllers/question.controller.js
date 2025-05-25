@@ -54,9 +54,9 @@ module.exports = {
 
     postAnswer: async (req, res) => {
         try {
-            const { description, correct_answer, question_id } = req.body;
+            const { question_id, description, correct_answer } = req.body;
 
-            if (!description || typeof correct_answer === "undefined" || !question_id) {
+            if (!question_id || !description || typeof correct_answer === "undefined") {
                 console.log("Missing fields in postAnswer");
                 return res.status(400).json({
                     message: "Missing required fields for answer",
@@ -65,7 +65,7 @@ module.exports = {
                 });
             }
 
-            const answer = await Answer.create({ description, correct_answer, question_id });
+            const answer = await Answer.create({ question_id, description, correct_answer });
             console.log("Add answer successfully");
             return res.status(200).json({
                 message: "Answer created successfully",
@@ -73,8 +73,8 @@ module.exports = {
                 DT: answer
             });
 
-        } catch (e) {
-            console.log("Error in postAnswer", e);
+        } catch (error) {
+            console.log("Error in postAnswer", error);
             res.status(500).json({ message: 'Internal server error' });
         }
     }
