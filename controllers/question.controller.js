@@ -1,5 +1,6 @@
 const Question = require('../models/Question');
 const Answer = require('../models/Answer');
+const _ = require("lodash");
 
 const multer = require('multer');
 const path = require('path');
@@ -90,18 +91,118 @@ module.exports = {
                     DT: null,
                 });
             }
+
             const questions = await Question.find({ quiz_id: quizId });
+
+            // Dùng Promise.all để xử lý song song các câu hỏi
+            const questionWithAnswers = await Promise.all(
+                questions.map(async (q) => {
+                    const answers = await Answer.find({ question_id: q._id });
+                    return {
+                        ...q.toObject(),
+                        answers
+                    };
+                })
+            );
+
             console.log("Questions fetched successfully");
             return res.status(200).json({
                 message: "Questions fetched successfully",
                 EC: 0,
-                DT: questions
+                DT: questionWithAnswers
             });
 
-        }
-        catch (e) {
+        } catch (e) {
             console.log("Error in getQuesbyQuizz", e);
-            res.status(500).json({ message: 'Internal server error', EC: 0, DT: null });
+            res.status(500).json({
+                message: 'Internal server error',
+                EC: -1,
+                DT: null
+            });
+        }
+    },
+    postSubmitQuiz: async (req, res) => {
+        try {
+            const { quizId, answers } = req.body;
+
+            if (!quizId || !answers) {
+                console.log("quizId and answers is required to submit quiz");
+                return res.status(400).json({
+                    EM: "Missing required fields",
+                    EC: -1,
+                    DT: null,
+                });
+            }
+
+            let countCorrect = 0;
+            let countTotal = answers.length;
+            let quizData = [];
+
+            for (const ans of answers) {
+                const questionId = ans.questionId;
+                const userAnswers = ans.userAnswerId; // mảng id đáp án do user chọn
+
+                const correctAnswers = await Answer.find({
+                    question_id: questionId,
+                    correct_answer: true,
+                });
+
+                const correctAnswerIds = correctAnswers.map((a) => a._id.toString());
+
+                // So sánh 2 mảng
+                const isCorrect = _.isEqual(
+                    _.sortBy(correctAnswerIds),
+                    _.sortBy(userAnswers.map((id) => id.toString()))
+                );
+
+                if (isCorrect) countCorrect++;
+
+                quizData.push({
+                    questionId,
+                    userAnswers,
+                    correctAnswers: correctAnswerIds,
+                    isCorrect,
+                });
+            }
+
+            return res.status(200).json({
+                EM: "Submit quiz successfully",
+                EC: 0,
+                DT: {
+                    countCorrect,
+                    countTotal,
+                    quizData,
+                },
+            });
+        } catch (error) {
+            console.log("Error submitting quiz:", error);
+            return res.status(500).json({
+                EM: "Internal server error",
+                EC: -1,
+                DT: null,
+            });
+        }
+    },
+    postSubmitQuiz2: async (req, res) => {
+        // countCorrect: res.DT.countCorrect,
+        //     countTotal: res.DT.countTotal,
+        //         quizData: res.DT.quizData,
+        try {
+            const { quizId, answers } = req.body;
+            if (!quizId || !answers) {
+                console.log("quizId and questions is required to submit quiz");
+                return res.status(400).json({
+                    EM: -1,
+                    DT: null
+                });
+            }
+            let ca;
+            for (ans of answers) {
+
+            }
+        } catch (error) {
+
         }
     }
+
 };

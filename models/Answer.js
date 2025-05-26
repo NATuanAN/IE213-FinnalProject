@@ -9,7 +9,7 @@ const AnswerSchema = new mongoose.Schema(
         correct_answer: {
             type: Boolean,
             required: true,
-            default: false, // use boolean, not string
+            default: false,
         },
         description: {
             type: String,
