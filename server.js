@@ -12,6 +12,7 @@ app.use(cors({ origin: process.env.CLIENT_URL }));
 app.use(express.json());
 app.use('/uploadsQuizz', express.static(path.join(__dirname, 'uploadsQuizz')));
 app.use('/uploadsQuestion', express.static(path.join(__dirname, 'uploadsQuestion')));
+app.use('/uploadsUser', express.static(path.join(__dirname, 'uploadsUser')));
 
 app.use('/api/v1', authRoutes);
 app.use('/api/v1', quizRoutes);
