@@ -264,6 +264,29 @@ module.exports = {
                 .status(500)
                 .json({ EC: -1, EM: "Internal Server Error", DT: error });
         }
+    },
+    getUserbyId: async (req, res) => {
+        try {
+            const { id } = req.params; // lấy id từ URL param
+            if (!id) {
+                console.log("Id is not exist");
+                return res.status(400).json({ EM: -1, DT: null, message: "Missing user id" });
+            }
+
+            const user = await User.findOne({ id: id });
+            if (!user) {
+                console.log("User is not exist");
+                return res.status(404).json({ EM: -2, DT: null, message: "User not found" });
+            }
+
+            console.log("Get user by id:", id);
+            return res.status(200).json({ EM: 0, DT: user });
+
+        } catch (e) {
+            console.error("Error in getUserbyId:", e);
+            return res.status(500).json({ EM: -1, DT: null, message: "Server error" });
+        }
     }
+
 }
 
