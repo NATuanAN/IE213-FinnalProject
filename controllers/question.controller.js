@@ -5,6 +5,7 @@ const _ = require("lodash");
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { isContext } = require('vm');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -121,6 +122,7 @@ module.exports = {
             });
         }
     },
+
     postSubmitQuiz: async (req, res) => {
         try {
             const { quizId, answers } = req.body;
@@ -140,27 +142,30 @@ module.exports = {
 
             for (const ans of answers) {
                 const questionId = ans.questionId;
-                const userAnswers = ans.userAnswerId; // mảng id đáp án do user chọn
+                const userAnswersId = ans.userAnswerId;
 
                 const correctAnswers = await Answer.find({
                     question_id: questionId,
                     correct_answer: true,
                 });
 
+                const userAnswer = await Answer.find({ _id: userAnswersId });
+
                 const correctAnswerIds = correctAnswers.map((a) => a._id.toString());
 
-                // So sánh 2 mảng
                 const isCorrect = _.isEqual(
                     _.sortBy(correctAnswerIds),
-                    _.sortBy(userAnswers.map((id) => id.toString()))
+                    _.sortBy(userAnswersId.map((_id) => _id.toString()))
                 );
 
                 if (isCorrect) countCorrect++;
 
+                const correctAnswersDes = correctAnswers.map((a) => a.description);
+                const userAnswersDes = userAnswer.map((a) => a.description)
                 quizData.push({
                     questionId,
-                    userAnswers,
-                    correctAnswers: correctAnswerIds,
+                    userAnswersId: userAnswersDes,
+                    correctAnswers: correctAnswersDes,
                     isCorrect,
                 });
             }
@@ -196,12 +201,27 @@ module.exports = {
                     DT: null
                 });
             }
-            let ca;
+
+            let countCorrect = 0;
+            let countTotal = answers.length;
+            let quizData = [];
+
             for (ans of answers) {
 
-            }
-        } catch (error) {
+                const realAnswer = await Answer.find({ quetion_id: ans.questionId, correct_answer: true });
+                const isCorrect = _.isEqual(
+                    _.sortBy(realAnswer.map((a) => a._id.toString())),
+                    _.sortBy(ans.userAnswerId.map((a) => a.toString()))
+                )
+                if (isCorrect) countCorrect++;
 
+            }
+
+
+
+        } catch (error) {
+            console.log("Error is cant post submit");
+            return res.status(500).json({ EM: -1, DT: null });
         }
     }
 
