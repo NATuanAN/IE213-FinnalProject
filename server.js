@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth.routes');
 const quizRoutes = require('./routes/quiz.routes');
 const questionRoutes = require("./routes/question.routes");
+const gptRoutes = require('./routes/GPT.routes');
+
+
 const path = require("path");
 const app = express();
 
@@ -17,6 +20,7 @@ app.use('/uploadsUser', express.static(path.join(__dirname, 'uploadsUser')));
 app.use('/api/v1', authRoutes);
 app.use('/api/v1', quizRoutes);
 app.use('/api/v1', questionRoutes);
+app.use('/api/v1', gptRoutes);
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
