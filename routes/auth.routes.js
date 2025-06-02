@@ -19,6 +19,9 @@ router.delete('/participant', authController.deleteUser);
 router.put('/participant', authController.upload.single("userImage"), authController.updateUser);
 router.get('/participant', authController.getUserWithPaginate);
 router.get('/participant/:id', authController.getUserbyId);
+
+
+router.post('/change-password/:id', authController.postChangePassword);
 // router.post('/logout', authMiddleware.verifyToken, authController.logout);
 // router.post('/change-password', authMiddleware.verifyToken, authController.changePassword);
 // router.post('/update-profile', authMiddleware.verifyToken, authController.updateProfile);

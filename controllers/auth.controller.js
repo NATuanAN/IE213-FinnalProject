@@ -286,7 +286,36 @@ module.exports = {
             console.error("Error in getUserbyId:", e);
             return res.status(500).json({ EM: -1, DT: null, message: "Server error" });
         }
-    }
+    },
+    postChangePassword: async (req, res) => {
+        try {
+            const { oldPassword, newPassword } = req.body;
+            const { id } = req.params;
+            if (!id || !oldPassword || !newPassword) {
+                console.log("Missing required fields");
+                return res.status(400).json({ EC: -1, EM: "Missing required fields", DT: null });
+            }
 
+            const user = await User.findById(id);
+            if (!user) {
+                console.log("User not found");
+                return res.status(404).json({ EC: -2, EM: "User not found", DT: null });
+            }
+
+            const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isPasswordMatch) {
+                console.log("Incorrect old password");
+                return res.status(401).json({ EC: -3, EM: "Incorrect old password", DT: null });
+            }
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            user.password = hashedPassword;
+            await user.save();
+            console.log("Password changed successfully");
+            return res.status(200).json({ EC: 0, EM: "Password changed successfully", DT: null });
+        }
+        catch (err) {
+
+        }
+    }
 }
 
